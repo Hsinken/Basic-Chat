@@ -145,7 +145,7 @@ extension ConsoleViewController: UITextFieldDelegate {
     let input = textField.text ?? ""
     var at = input
     //Force AT+CMD to uppercased, argvs doesn't uppercase
-      if input.hasPrefix("at+") {
+      if input.uppercased().hasPrefix("AT+") {
           if let index = input.firstIndex(of: " ") {
               let cmd = input[..<index]
               let cmdS = String(cmd).uppercased()
