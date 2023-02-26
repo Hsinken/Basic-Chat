@@ -12,8 +12,6 @@ class TableViewCell: UITableViewCell {
     @IBOutlet weak var peripheralLabel: UILabel!
     @IBOutlet weak var rssiLabel: UILabel!
 
-
-
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

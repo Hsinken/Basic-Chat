@@ -285,14 +285,14 @@
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BlueCell") as! TableViewCell
 
-        let peripheralFound = self.peripheralArray[indexPath.row]
+        let peripheralFound:CBPeripheral? = self.peripheralArray[indexPath.row]
 
         let rssiFound = self.rssiArray[indexPath.row]
 
           if peripheralFound == nil {
               cell.peripheralLabel.text = "Unknown"
           }else {
-              cell.peripheralLabel.text = peripheralFound.name
+              cell.peripheralLabel.text = peripheralFound!.name
               cell.rssiLabel.text = "RSSI: \(rssiFound)"
           }
           return cell

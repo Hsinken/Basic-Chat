@@ -71,8 +71,8 @@ class ConsoleViewController: UIViewController {
     if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
 
       let keyboardHeight = keyboardSize.height
-      print(keyboardHeight)
-      view.frame.origin.y = (-keyboardHeight + 50)
+      //print(keyboardHeight)
+        view.frame.origin.y = (-keyboardHeight + 34*0.5)
     }
   }
 
@@ -90,7 +90,9 @@ class ConsoleViewController: UIViewController {
       //change the "data" to valueString
     if let blePeripheral = BlePeripheral.connectedPeripheral {
           if let txCharacteristic = BlePeripheral.connectedTXChar {
-              blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+              //blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+              //Hiking用withoutResponse + Notify模式溝通
+              blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
           }
       }
   }

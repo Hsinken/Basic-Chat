@@ -328,14 +328,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2X94RM7457;
+				DEVELOPMENT_TEAM = GEUYBBC7FH;
 				INFOPLIST_FILE = "Basic Chat MVC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Adafruit.Industries.Basic-Chat";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mwedo.Adafruit.Industries.Basic-Chat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -349,14 +349,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2X94RM7457;
+				DEVELOPMENT_TEAM = GEUYBBC7FH;
 				INFOPLIST_FILE = "Basic Chat MVC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.Adafruit.Industries.Basic-Chat";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mwedo.Adafruit.Industries.Basic-Chat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
