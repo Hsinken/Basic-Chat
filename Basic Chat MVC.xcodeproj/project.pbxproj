@@ -330,6 +330,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = GEUYBBC7FH;
 				INFOPLIST_FILE = "Basic Chat MVC/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "BLE Chat";
+				"INFOPLIST_KEY_CFBundleDisplayName[sdk=iphoneos*]" = "BLE Chat";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -351,6 +353,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = GEUYBBC7FH;
 				INFOPLIST_FILE = "Basic Chat MVC/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "BLE Chat";
+				"INFOPLIST_KEY_CFBundleDisplayName[sdk=iphoneos*]" = "BLE Chat";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
