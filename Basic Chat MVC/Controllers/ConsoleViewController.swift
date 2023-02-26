@@ -31,7 +31,8 @@ class ConsoleViewController: UIViewController {
 
     consoleTextField.delegate = self
 
-    peripheralLabel.text = BlePeripheral.connectedPeripheral?.name
+    let connectedPeripheral = BlePeripheral.connectedPeripheral
+    peripheralLabel.text = (connectedPeripheral!.name ?? "No Name") + "(" + connectedPeripheral!.identifier.uuidString + ")"
 
     txLabel.text = "TX:\(String(BlePeripheral.connectedTXChar!.uuid.uuidString))"
     rxLabel.text = "RX:\(String(BlePeripheral.connectedRXChar!.uuid.uuidString))"
@@ -48,7 +49,8 @@ class ConsoleViewController: UIViewController {
   }
 
   func appendTxDataToTextView(){
-    consoleTextView.text.append("\n[Sent]: \(String(consoleTextField.text!)) \n")
+      print("Value Sent: \(String(consoleTextField.text!))")
+      consoleTextView.text.append("\n[Sent]: \(String(consoleTextField.text!)) \n")
   }
 
   func keyboardNotifications() {
@@ -144,7 +146,7 @@ extension ConsoleViewController: UITextFieldDelegate {
     writeOutgoingValue(data: textField.text ?? "")
     appendTxDataToTextView()
     textField.resignFirstResponder()
-    textField.text = ""
+    //textField.text = ""
     return true
 
   }

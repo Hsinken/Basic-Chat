@@ -182,6 +182,11 @@
   // MARK: - CBPeripheralDelegate
   // A protocol that provides updates on the use of a peripheral’s services.
   extension ViewController: CBPeripheralDelegate {
+      
+      func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
+          print("Function: \(#function),Line: \(#line)")
+          print(peripheral)
+      }
 
       func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
 
@@ -292,7 +297,7 @@
           if peripheralFound == nil {
               cell.peripheralLabel.text = "Unknown"
           }else {
-              cell.peripheralLabel.text = peripheralFound!.name
+              cell.peripheralLabel.text = (peripheralFound!.name ?? "No Name") + "(" + peripheralFound!.identifier.uuidString + ")"
               cell.rssiLabel.text = "RSSI: \(rssiFound)"
           }
           return cell
