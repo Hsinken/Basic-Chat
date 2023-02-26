@@ -48,9 +48,8 @@ class ConsoleViewController: UIViewController {
     consoleTextView.text.append("\n[Recv]: \(notification.object!) \n")
   }
 
-  func appendTxDataToTextView(){
-      print("Value Sent: \(String(consoleTextField.text!))")
-      consoleTextView.text.append("\n[Sent]: \(String(consoleTextField.text!)) \n")
+    func appendTxDataToTextView(CMD: String = ""){
+      consoleTextView.text.append("\n[Sent]: \(CMD) \n")
   }
 
   func keyboardNotifications() {
@@ -143,8 +142,24 @@ extension ConsoleViewController: UITextViewDelegate {
 extension ConsoleViewController: UITextFieldDelegate {
 
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    writeOutgoingValue(data: textField.text ?? "")
-    appendTxDataToTextView()
+    let input = textField.text ?? ""
+    var at = input
+    //Force AT+CMD to uppercased, argvs doesn't uppercase
+      if input.hasPrefix("at+") {
+          if let index = input.firstIndex(of: " ") {
+              let cmd = input[..<index]
+              let cmdS = String(cmd).uppercased()
+              at = input.replacingOccurrences(of: cmd, with: cmdS)
+              //print(cmdS)
+              print("CMD uppercased:" + at)
+          } else {
+              at = input.uppercased()
+              print("All uppercased:" + at)
+          }
+      }
+    print("Value Sent: \(at)")
+    writeOutgoingValue(data: at)
+    appendTxDataToTextView(CMD: at)
     textField.resignFirstResponder()
     //textField.text = ""
     return true
