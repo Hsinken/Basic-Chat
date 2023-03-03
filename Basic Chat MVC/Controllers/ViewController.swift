@@ -162,6 +162,8 @@
           peripheralArray.append(peripheral)
           rssiArray.append(RSSI)
         }
+          
+        print(advertisementData)
 
         peripheralFoundLabel.text = "Peripherals Found: \(peripheralArray.count)"
 
@@ -298,6 +300,7 @@
               cell.peripheralLabel.text = "Unknown"
           }else {
               cell.peripheralLabel.text = (peripheralFound!.name ?? "No Name") + "(" + peripheralFound!.identifier.uuidString + ")"
+              print(peripheralFound!.)
               cell.rssiLabel.text = "RSSI: \(rssiFound)"
           }
           return cell
