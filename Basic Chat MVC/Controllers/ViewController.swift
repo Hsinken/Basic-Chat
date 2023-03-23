@@ -300,13 +300,11 @@
               cell.peripheralLabel.text = "Unknown"
           }else {
               cell.peripheralLabel.text = (peripheralFound!.name ?? "No Name") + "(" + peripheralFound!.identifier.uuidString + ")"
-              print(peripheralFound!.)
+              print(peripheralFound!)
               cell.rssiLabel.text = "RSSI: \(rssiFound)"
           }
           return cell
       }
-
-
   }
 
 
