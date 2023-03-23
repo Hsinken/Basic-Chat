@@ -86,25 +86,27 @@ class ConsoleViewController: UIViewController {
   }
 
   // Write functions
-  func writeOutgoingValue(data: String){
-      let valueString = (data as NSString).data(using: String.Encoding.utf8.rawValue)
-      //change the "data" to valueString
-    if let blePeripheral = BlePeripheral.connectedPeripheral {
-          if let txCharacteristic = BlePeripheral.connectedTXChar {
-              //blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
-              //Hiking用withoutResponse + Notify模式溝通
-              blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
-          }
+    func writeOutgoingValue(data: String){
+        let valueString = (data as NSString).data(using: String.Encoding.utf8.rawValue)
+        //change the "data" to valueString
+        if let blePeripheral = BlePeripheral.connectedPeripheral {
+            if let txCharacteristic = BlePeripheral.connectedTXChar {
+                //blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+                //Hiking用withoutResponse + Notify模式溝通
+                blePeripheral.writeValue(valueString!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+            }
+        }
+    }
+
+  //目前沒操作到
+  func writeCharacteristic(incomingValue: Int8){
+      var val = incomingValue
+
+      let outgoingData = NSData(bytes: &val, length: MemoryLayout<Int8>.size)
+      if let blePeripheral = BlePeripheral.connectedPeripheral {
+          blePeripheral.writeValue(outgoingData as Data, for: BlePeripheral.connectedTXChar!, type: CBCharacteristicWriteType.withResponse)
       }
   }
-
-  func writeCharacteristic(incomingValue: Int8){
-    var val = incomingValue
-
-    let outgoingData = NSData(bytes: &val, length: MemoryLayout<Int8>.size)
-    peripheral?.writeValue(outgoingData as Data, for: BlePeripheral.connectedTXChar!, type: CBCharacteristicWriteType.withResponse)
-  }
-}
 
 extension ConsoleViewController: CBPeripheralManagerDelegate {
 
