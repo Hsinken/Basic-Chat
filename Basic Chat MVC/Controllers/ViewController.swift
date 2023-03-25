@@ -196,7 +196,23 @@
         for service in services {
           peripheral.discoverCharacteristics(nil, for: service)
         }
-        BlePeripheral.connectedService = services[0]
+          
+          //正式時Service會在搜尋時就濾掉，這邊就不重複寫了，只處理能找到的裝置
+          if services.count > 0  {
+              BlePeripheral.connectedService = services[0]
+          } else {
+              //通知裝置無法找到Service
+              let alertVC = UIAlertController(title: "Bluetooth Unsupported", message: peripheral.name ?? "N/A", preferredStyle: UIAlertController.Style.alert)
+
+              let action = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) -> Void in
+                  self.dismiss(animated: true, completion: nil)
+              })
+
+              alertVC.addAction(action)
+
+              self.present(alertVC, animated: true, completion: nil)
+
+          }
       }
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
