@@ -45,11 +45,17 @@ class ConsoleViewController: UIViewController {
     }
     
     @objc func appendRxDataToTextView(notification: Notification) -> Void{
-        consoleTextView.text.append("\n[Recv]: \(notification.object!) \n")
+        DispatchQueue.main.asyncAfter(deadline:.now() + 0.3) {
+            self.consoleTextView.text.append("\n[Recv]: \(notification.object!) \n")
+            self.consoleTextView.ScrollToBottom()
+        }
     }
     
     func appendTxDataToTextView(CMD: String = ""){
-        consoleTextView.text.append("\n[Sent]: \(CMD) \n")
+        DispatchQueue.main.asyncAfter(deadline:.now() + 0.3) {
+            self.consoleTextView.text.append("\n[Sent]: \(CMD) \n")
+            self.consoleTextView.ScrollToBottom()
+        }
     }
     
     func keyboardNotifications() {
@@ -170,4 +176,12 @@ extension ConsoleViewController: UITextFieldDelegate {
     return true
   }
 
+}
+
+extension UITextView {
+    func ScrollToBottom() {
+        let textCount: Int = text.count
+        guard textCount >= 1 else { return }
+        scrollRangeToVisible(NSRange(location: textCount - 1, length: 1))
+    }
 }
