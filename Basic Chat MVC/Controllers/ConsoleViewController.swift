@@ -37,17 +37,32 @@ class ConsoleViewController: UIViewController {
         txLabel.text = "TX:\(String(BlePeripheral.connectedTXChar!.uuid.uuidString))"
         rxLabel.text = "RX:\(String(BlePeripheral.connectedRXChar!.uuid.uuidString))"
         
-        if let service = BlePeripheral.connectedService {
+        if let _ = BlePeripheral.connectedService {
             serviceLabel.text = "Number of Services: \(String((BlePeripheral.connectedPeripheral?.services!.count)!))"
         } else{
             print("Service was not found")
         }
+        
+        consoleTextField.text = "AT+GBAT"
     }
     
     @objc func appendRxDataToTextView(notification: Notification) -> Void{
         DispatchQueue.main.asyncAfter(deadline:.now() + 0.3) {
-            self.consoleTextView.text.append("\n[Recv]: \(notification.object!) \n")
-            self.consoleTextView.ScrollToBottom()
+            if let data = notification.object {
+                let recvStr: String = data as! String
+                self.consoleTextView.text.append("\n[Recv]:"+recvStr+"\n")
+                if let rData = ATCmdHelper.receiveToData(recvStr) {
+                    print(rData)
+                    let cmdHexStr = ATCmdHelper.receiveCodeToHexString(rData.cmdCode)
+                    self.consoleTextView.text.append("\nCMD:" + cmdHexStr)
+                    self.consoleTextView.text.append("\nPayload:")
+                    for item in rData.dataAry {
+                        let str = "\nKey:" + item.key.rawValue + "  Value:" + item.value  + "\n"
+                        self.consoleTextView.text.append(str)
+                    }
+                }
+                self.consoleTextView.ScrollToBottom()
+            }
         }
     }
     

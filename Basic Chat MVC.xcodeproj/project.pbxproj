@@ -17,6 +17,7 @@
 		29A1DF6725CBB6E4000A9A84 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A1DF6625CBB6E4000A9A84 /* TableViewCell.swift */; };
 		29A1DF7025CF0560000A9A84 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */; };
 		29DEAA1225D9A787002AECEC /* BlePeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DEAA1125D9A787002AECEC /* BlePeripheral.swift */; };
+		4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		29A1DF6625CBB6E4000A9A84 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
 		29DEAA1125D9A787002AECEC /* BlePeripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheral.swift; sourceTree = "<group>"; };
+		4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCmdHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 		29A1DF4725CB1D7F000A9A84 /* Basic Chat MVC */ = {
 			isa = PBXGroup;
 			children = (
+				4F73CBC029E863DA00BA8032 /* Helper */,
 				29A1DF4825CB1D7F000A9A84 /* AppDelegate.swift */,
 				29A1DF4A25CB1D7F000A9A84 /* SceneDelegate.swift */,
 				2970B39225DF554A001CF3CF /* Model */,
@@ -101,6 +104,14 @@
 				29A1DF5625CB1D82000A9A84 /* Info.plist */,
 			);
 			path = "Basic Chat MVC";
+			sourceTree = "<group>";
+		};
+		4F73CBC029E863DA00BA8032 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,6 +189,7 @@
 				29A1DF6225CBA309000A9A84 /* CBUUIDs.swift in Sources */,
 				29A1DF7025CF0560000A9A84 /* ConsoleViewController.swift in Sources */,
 				29A1DF6725CBB6E4000A9A84 /* TableViewCell.swift in Sources */,
+				4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */,
 				29A1DF4B25CB1D7F000A9A84 /* SceneDelegate.swift in Sources */,
 				29DEAA1225D9A787002AECEC /* BlePeripheral.swift in Sources */,
 			);
@@ -328,7 +340,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GEUYBBC7FH;
+				DEVELOPMENT_TEAM = 7727LWL732;
 				INFOPLIST_FILE = "Basic Chat MVC/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "BLE Chat";
 				"INFOPLIST_KEY_CFBundleDisplayName[sdk=iphoneos*]" = "BLE Chat";
@@ -337,7 +349,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mwedo.Adafruit.Industries.Basic-Chat";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mwedo.Industries.Basic-Chat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -351,7 +363,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GEUYBBC7FH;
+				DEVELOPMENT_TEAM = 7727LWL732;
 				INFOPLIST_FILE = "Basic Chat MVC/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "BLE Chat";
 				"INFOPLIST_KEY_CFBundleDisplayName[sdk=iphoneos*]" = "BLE Chat";
@@ -360,7 +372,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mwedo.Adafruit.Industries.Basic-Chat";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mwedo.Industries.Basic-Chat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
