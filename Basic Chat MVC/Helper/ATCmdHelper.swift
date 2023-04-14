@@ -39,6 +39,8 @@ struct ATCmdReceiveData {
 class ATCmdHelper: NSObject {
     public static let CMDCodeStrLength: Int = 4
     public static let EndCMDStr: String = "\nOK".lowercased()
+    public static let LocationDegreesFixedDivisor: Double = 10000000.0 //座標固定格式 用INT代表 正負1~3位整數部分 + 小數點固定後七位
+    
     public static func receiveToData(_ receive: String?) -> ATCmdReceiveData? {
         print("receiveToData:", receive ?? "nil")
         if var procStr = receive {
@@ -99,5 +101,36 @@ class ATCmdHelper: NSObject {
     public static func receiveCodeToHexString(_ code: ATCmdReceiveCode) -> String{
         let str = String(format:"%04X", code.rawValue)
         return str
+    }
+    
+    public static func hexStringToFloat(_ hexString: String?) -> Float? {
+        if let hexStr = hexString {
+            //Str先轉成I32
+            if let toInt = self.hexStringToInt32(hexStr) {
+                //把Int32位元資料當成Float來轉換
+                let toFloat = Float(bitPattern: UInt32(toInt))
+                return toFloat
+            }
+        }
+        return nil
+    }
+    
+    public static func hexStringToLocationDegrees(_ hexString: String?) -> Double? {
+        if let hexStr = hexString {
+            //Str先轉成I32
+            if let toInt = self.hexStringToInt32(hexStr) {
+                //把Int32位元資料當成Float來轉換
+                let toDouble: Double = Double(toInt) / self.LocationDegreesFixedDivisor
+                return toDouble
+            }
+        }
+        return nil
+    }
+    
+    public static func hexStringToInt32(_ hexString: String?) -> Int? {
+        if let hexStr = hexString {
+            return strtol(hexStr, nil, 16)
+        }
+        return nil
     }
 }

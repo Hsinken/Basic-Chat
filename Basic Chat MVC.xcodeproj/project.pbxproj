@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,7 @@
 		29A1DF7025CF0560000A9A84 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */; };
 		29DEAA1225D9A787002AECEC /* BlePeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DEAA1125D9A787002AECEC /* BlePeripheral.swift */; };
 		4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */; };
+		4F73CBC629E90FBD00BA8032 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73CBC529E90FBD00BA8032 /* String+Hex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
 		29DEAA1125D9A787002AECEC /* BlePeripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheral.swift; sourceTree = "<group>"; };
 		4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCmdHelper.swift; sourceTree = "<group>"; };
+		4F73CBC529E90FBD00BA8032 /* String+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Hex.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,9 +111,18 @@
 		4F73CBC029E863DA00BA8032 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				4F73CBC429E90F9A00BA8032 /* extension */,
 				4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */,
 			);
 			path = Helper;
+			sourceTree = "<group>";
+		};
+		4F73CBC429E90F9A00BA8032 /* extension */ = {
+			isa = PBXGroup;
+			children = (
+				4F73CBC529E90FBD00BA8032 /* String+Hex.swift */,
+			);
+			path = extension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,6 +151,7 @@
 		29A1DF3D25CB1D7F000A9A84 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
@@ -189,6 +201,7 @@
 				29A1DF6225CBA309000A9A84 /* CBUUIDs.swift in Sources */,
 				29A1DF7025CF0560000A9A84 /* ConsoleViewController.swift in Sources */,
 				29A1DF6725CBB6E4000A9A84 /* TableViewCell.swift in Sources */,
+				4F73CBC629E90FBD00BA8032 /* String+Hex.swift in Sources */,
 				4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */,
 				29A1DF4B25CB1D7F000A9A84 /* SceneDelegate.swift in Sources */,
 				29DEAA1225D9A787002AECEC /* BlePeripheral.swift in Sources */,

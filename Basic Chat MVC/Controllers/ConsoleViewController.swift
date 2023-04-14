@@ -46,18 +46,57 @@ class ConsoleViewController: UIViewController {
         consoleTextField.text = "AT+GBAT"
     }
     
+    func getCurrentLocalTimeString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.'MICROS'"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone.current
+
+        // Get the number of microseconds with a precision of 6 digits
+        let now = Date()
+        let dateParts = Calendar.current.dateComponents([.nanosecond], from: now)
+        let microSeconds = Int((Double(dateParts.nanosecond!) / 1000).rounded(.toNearestOrEven))
+        let microSecPart = String(microSeconds).padding(toLength: 6, withPad: "0", startingAt: 0)
+
+        // Format the date and add in the microseconds
+        var timestamp = dateFormatter.string(from: now)
+        timestamp = timestamp.replacingOccurrences(of: "MICROS", with: microSecPart)
+        return timestamp
+    }
+    
     @objc func appendRxDataToTextView(notification: Notification) -> Void{
+        let currntTime = self.getCurrentLocalTimeString()
         DispatchQueue.main.asyncAfter(deadline:.now() + 0.3) {
             if let data = notification.object {
                 let recvStr: String = data as! String
-                self.consoleTextView.text.append("\n[Recv]:"+recvStr+"\n")
+                let displayStr: String = recvStr.replacingOccurrences(of: "\n", with: "\\n").replacingOccurrences(of: "\r", with: "\\r").replacingOccurrences(of: "\t", with: "\\t").replacingOccurrences(of: " ", with: "◇")
+                self.consoleTextView.text.append("\n[Recv] "+currntTime+"\n"+displayStr+"\n")
                 if let rData = ATCmdHelper.receiveToData(recvStr) {
                     print(rData)
                     let cmdHexStr = ATCmdHelper.receiveCodeToHexString(rData.cmdCode)
                     self.consoleTextView.text.append("\nCMD:" + cmdHexStr)
                     self.consoleTextView.text.append("\nPayload:")
                     for item in rData.dataAry {
-                        let str = "\nKey:" + item.key.rawValue + "  Value:" + item.value  + "\n"
+                        var str: String
+                        switch rData.cmdCode {
+                            case .GBAT:
+                                if let conv = ATCmdHelper.hexStringToInt32(item.value) {
+                                    let convStr = String(conv)
+                                    let strS = "\nK:"+item.key.rawValue+"  V(I32 Hex):"
+                                    let strE = item.value+"  V(I32 10B):"+convStr+"\n"
+                                    str = strS + strE
+                                } else {
+                                    let strS = "\nK:"+item.key.rawValue+"  V:"
+                                    let strE = item.value+"\nV(Int32 10B): Can't Conv.\n"
+                                    str = strS + strE
+                                }
+                                break
+                            default:
+                                str = "\nK:" + item.key.rawValue + "  V:" + item.value + "\n"
+                                break
+                        }
+                        
+                        
                         self.consoleTextView.text.append(str)
                     }
                 }
@@ -67,8 +106,9 @@ class ConsoleViewController: UIViewController {
     }
     
     func appendTxDataToTextView(CMD: String = ""){
+        let currntTime = self.getCurrentLocalTimeString()
         DispatchQueue.main.asyncAfter(deadline:.now() + 0.3) {
-            self.consoleTextView.text.append("\n[Sent]: \(CMD) \n")
+            self.consoleTextView.text.append("\n=======\n[Sent] "+currntTime+"\n \(CMD) \n")
             self.consoleTextView.ScrollToBottom()
         }
     }

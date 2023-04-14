@@ -16,6 +16,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         //let rData = ATCmdHelper.receiveToData("02740215\nOK")
         //print(rData)
+        //let testStr = "0215" // Int 533
+        let testStr = "0EC5F6E0" //Int +247854816 //LocationDegrees :24.7854816
+        //let testStr = "481EFFB0" //Int +1209991088 //LocationDegrees :120.9991088
+        //let testResult = ATCmdHelper.hexStringToInt32(testStr)
+        let testResult = ATCmdHelper.hexStringToLocationDegrees(testStr)
+        
+        //let testStr = "0x42f9b6c9" //124.857
+        //let testStr = "0xc2f9b6c9" //-124.857
+        //let testResult = ATCmdHelper.hexStringToFloat(testStr)
+        
+        print(testResult ?? "Cant't conv:" + testStr)
         return true
     }
 
