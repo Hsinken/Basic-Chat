@@ -12,41 +12,8 @@ import DequeModule
 
 //ATCmd處理 主要用Delegate，特殊情況才考慮用Notifaction
 
-enum ATCmdSendCommand : String, CaseIterable {
-    case GBAT = "AT+GBAT"
-    case GGPS = "AT+GGPS"
-    case GTIME = "AT+GTIME"
-    case GVER = "AT+GVER"
-    //case GLOG =
-    //case SUID =
-    case SVOICE = "AT+SVOICE"
-    //case SUGENT =
-    case NotSet = "ATCmd NotSet"
-}
-
-enum ATCmdReceiveHeader : UInt16, CaseIterable {
-    case GBAT = 0x0274
-    case GGPS = 0x0288
-    case GTIME = 0x0501
-    case GVER = 0x0502
-    //case GLOG =
-    //case SUID =
-    //case SVOICE =
-    //case SUGENT =
-    case NotFound = 0xffff
-    case NotSet = 0x0000
-}
-
-enum ATCmdReceiveDataKey : String {
-    case BatteryLV = "BatteryLV"
-    case Latitude = "Latitude"
-    case Longitude = "Longitude"
-    case UTCDate = "UTCDate"
-    case HWVer = "HWVer"
-}
-
 struct ATCmdReceiveData {
-    var cmdCode: ATCmdReceiveHeader
+    var command: ATCommand
     var dataAry: [ATCmdReceiveDataKey: String]
 }
 
@@ -78,22 +45,21 @@ class ATCmdHelper: NSObject {
                 procStr = String(procStr[...endIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
             }
             
-            var findCmdCode: ATCmdReceiveHeader? = nil
-            for code in ATCmdReceiveHeader.allCases {
-                let cmdHexStr = ATCmdHelper.receiveCodeToHexString(code)
-                if procStr.hasPrefix(cmdHexStr) {
-                    findCmdCode = code
-                    print("Find CMD:", code, "("+cmdHexStr+")")
+            var findCmd: ATCommand? = nil
+            for cmd in ATCommand.allCases {
+                if procStr.hasPrefix(cmd.rawValue.recvHeaderStr) {
+                    findCmd = cmd
+                    print("Find CMD:", cmd)
                     break
                 }
             }
             
-            if let procCmdCode = findCmdCode {
+            if let procCmd = findCmd {
                 var procSuccess = false
                 var receiveData: [ATCmdReceiveDataKey: String] = [:]
                 let startIndex = procStr.index(procStr.startIndex, offsetBy:ATCmdHelper.CMDCodeStrLength)
                 let payload: String = String(procStr[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
-                switch procCmdCode {
+                switch procCmd {
                     case .GBAT:
                         if !payload.isEmpty {
                             receiveData[ATCmdReceiveDataKey.BatteryLV] = payload
@@ -106,14 +72,12 @@ class ATCmdHelper: NSObject {
                         break
                     case.GVER:
                         break
-                    case .NotFound:
-                        break
-                    case .NotSet:
+                    case .notSet:
                         break
                 }
                 
                 if procSuccess {
-                    return ATCmdReceiveData(cmdCode: procCmdCode, dataAry: receiveData)
+                    return ATCmdReceiveData(command: procCmd, dataAry: receiveData)
                 } else {
                     print("Process Payload Not success")
                 }
@@ -125,16 +89,20 @@ class ATCmdHelper: NSObject {
         return nil
     }
     
-    public static func receiveCodeToHexString(_ code: ATCmdReceiveHeader) -> String{
-        let str = String(format:"%04X", code.rawValue)
+    public static func convIntToBatteryVoltage(_ value: Int) -> Float {
+        return Float(value) * 7.2 / 1023.0
+    }
+    
+    public static func receiveHeaderToHexString(_ recvHeader: UInt16) -> String{
+        let str = String(format:"%04X", recvHeader)
         return str
     }
     
     public static func hexStringToFloat(_ hexString: String?) -> Float? {
         if let hexStr = hexString {
             //Str先轉成I32
-            if let toInt = self.hexStringToInt32(hexStr) {
-                //把Int32位元資料當成Float來轉換
+            if let toInt = self.hexStringToInt(hexStr) {
+                //把Int32位元資料當成Float來轉換<注意這邊要用UInt32，位元直接轉換沒影響正負>
                 let toFloat = Float(bitPattern: UInt32(toInt))
                 return toFloat
             }
@@ -145,7 +113,7 @@ class ATCmdHelper: NSObject {
     public static func hexStringToLocationDegrees(_ hexString: String?) -> Double? {
         if let hexStr = hexString {
             //Str先轉成I32
-            if let toInt = self.hexStringToInt32(hexStr) {
+            if let toInt = self.hexStringToInt(hexStr) {
                 //把Int32位元資料當成Float來轉換
                 let toDouble: Double = Double(toInt) / self.LocationDegreesFixedDivisor
                 return toDouble
@@ -154,7 +122,7 @@ class ATCmdHelper: NSObject {
         return nil
     }
     
-    public static func hexStringToInt32(_ hexString: String?) -> Int? {
+    public static func hexStringToInt(_ hexString: String?) -> Int? {
         if let hexStr = hexString {
             return strtol(hexStr, nil, 16)
         }

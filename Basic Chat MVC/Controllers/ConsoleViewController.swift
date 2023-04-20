@@ -72,35 +72,6 @@ class ConsoleViewController: UIViewController {
                 let recvStr: String = data as! String
                 let displayStr: String = recvStr.replacingOccurrences(of: "\n", with: "\\n").replacingOccurrences(of: "\r", with: "\\r").replacingOccurrences(of: "\t", with: "\\t").replacingOccurrences(of: " ", with: "◇")
                 self.consoleTextView.text.append("\n[Recv] "+currntTime+"\n"+displayStr+"\n")
-                if let rData = ATCmdHelper.receiveToData(recvStr) {
-                    print(rData)
-                    let cmdHexStr = ATCmdHelper.receiveCodeToHexString(rData.cmdCode)
-                    self.consoleTextView.text.append("\nCMD:" + cmdHexStr)
-                    self.consoleTextView.text.append("\nPayload:")
-                    for item in rData.dataAry {
-                        var str: String
-                        switch rData.cmdCode {
-                            case .GBAT:
-                                if let conv = ATCmdHelper.hexStringToInt32(item.value) {
-                                    let convStr = String(conv)
-                                    let strS = "\nK:"+item.key.rawValue+"  V(I32 Hex):"
-                                    let strE = item.value+"  V(I32 10B):"+convStr+"\n"
-                                    str = strS + strE
-                                } else {
-                                    let strS = "\nK:"+item.key.rawValue+"  V:"
-                                    let strE = item.value+"\nV(Int32 10B): Can't Conv.\n"
-                                    str = strS + strE
-                                }
-                                break
-                            default:
-                                str = "\nK:" + item.key.rawValue + "  V:" + item.value + "\n"
-                                break
-                        }
-                        
-                        
-                        self.consoleTextView.text.append(str)
-                    }
-                }
                 self.consoleTextView.ScrollToBottom()
             }
         }

@@ -23,6 +23,7 @@
 		4F19D0E429F0FEE000FE5147 /* ATCmdData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0E329F0FEE000FE5147 /* ATCmdData.swift */; };
 		4F19D0E629F152B000FE5147 /* StackingStoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0E529F152B000FE5147 /* StackingStoneViewController.swift */; };
 		4F19D0E929F1547000FE5147 /* UITextView+ScrollToBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0E829F1547000FE5147 /* UITextView+ScrollToBottom.swift */; };
+		4F19D0EB29F1769F00FE5147 /* ATCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0EA29F1769F00FE5147 /* ATCommand.swift */; };
 		4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 		4F19D0E329F0FEE000FE5147 /* ATCmdData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCmdData.swift; sourceTree = "<group>"; };
 		4F19D0E529F152B000FE5147 /* StackingStoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackingStoneViewController.swift; sourceTree = "<group>"; };
 		4F19D0E829F1547000FE5147 /* UITextView+ScrollToBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+ScrollToBottom.swift"; sourceTree = "<group>"; };
+		4F19D0EA29F1769F00FE5147 /* ATCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCommand.swift; sourceTree = "<group>"; };
 		4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCmdHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,6 +125,7 @@
 		4F19D0E229F0FE8600FE5147 /* Struct */ = {
 			isa = PBXGroup;
 			children = (
+				4F19D0EA29F1769F00FE5147 /* ATCommand.swift */,
 				4F19D0E329F0FEE000FE5147 /* ATCmdData.swift */,
 			);
 			path = Struct;
@@ -226,6 +229,7 @@
 			files = (
 				29A1DF4D25CB1D7F000A9A84 /* ViewController.swift in Sources */,
 				4F19D0E429F0FEE000FE5147 /* ATCmdData.swift in Sources */,
+				4F19D0EB29F1769F00FE5147 /* ATCommand.swift in Sources */,
 				4F19D0E629F152B000FE5147 /* StackingStoneViewController.swift in Sources */,
 				29A1DF4925CB1D7F000A9A84 /* AppDelegate.swift in Sources */,
 				29A1DF6225CBA309000A9A84 /* CBUUIDs.swift in Sources */,

@@ -74,18 +74,19 @@ class StackingStoneViewController: UIViewController {
                 self.consoleTextView.text.append("\n[Recv] "+currntTime+"\n"+displayStr+"\n")
                 if let rData = ATCmdHelper.receiveToData(recvStr) {
                     print(rData)
-                    let cmdHexStr = ATCmdHelper.receiveCodeToHexString(rData.cmdCode)
-                    self.consoleTextView.text.append("\nCMD:" + cmdHexStr)
+                    self.consoleTextView.text.append("\nCMD:" + rData.command.rawValue.recvHeaderStr)
                     self.consoleTextView.text.append("\nPayload:")
                     for item in rData.dataAry {
                         var str: String
-                        switch rData.cmdCode {
+                        switch rData.command {
                             case .GBAT:
-                                if let conv = ATCmdHelper.hexStringToInt32(item.value) {
+                                if let conv = ATCmdHelper.hexStringToInt(item.value) {
+                                    let batVoltage: Float = ATCmdHelper.convIntToBatteryVoltage(conv)
                                     let convStr = String(conv)
                                     let strS = "\nK:"+item.key.rawValue+"  V(I32 Hex):"
-                                    let strE = item.value+"  V(I32 10B):"+convStr+"\n"
-                                    str = strS + strE
+                                    let strM = item.value+"  V(I32 10B):"+convStr+"\n"
+                                    let strE = "V(電壓):"+String(batVoltage)+"\n"
+                                    str = strS + strM + strE
                                 } else {
                                     let strS = "\nK:"+item.key.rawValue+"  V:"
                                     let strE = item.value+"\nV(Int32 10B): Can't Conv.\n"

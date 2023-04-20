@@ -32,25 +32,35 @@ enum ATCmdRecvMode {
     case batch
 }
 
+enum ATCmdReceiveDataKey : String {
+    case BatteryLV = "BatteryLV"
+    case Latitude = "Latitude"
+    case Longitude = "Longitude"
+    case UTCDate = "UTCDate"
+    case HWVer = "HWVer"
+}
+
 struct ATCmdData {
     var status: ATCmdDataStatus = .notSet
+    var command: ATCommand = .notSet
     var send: ATCmdDataSend
     var recv: ATCmdDataRecv
     var updateTime: Date = Date()
 }
 
 struct ATCmdDataSend {
-    var cmd: ATCmdSendCommand = .NotSet
-    var param: String?
+    var param: String = ""
     var startTiem: Date?
     var endTiem: Date?
     var retryCount: Int = 0
 }
 
 struct ATCmdDataRecv {
-    var header: ATCmdReceiveHeader = .NotSet
     var mode: ATCmdRecvMode = .oneTime
-    var payload: String?
+    var rawPayload: String = ""
+    var payloadAry: [ATCmdReceiveDataKey: String] = [:]
     var startTiem: Date?
     var endTiem: Date?
+    var batchNumTarget: Int = 0
+    var batchNumNow: Int = 0
 }
