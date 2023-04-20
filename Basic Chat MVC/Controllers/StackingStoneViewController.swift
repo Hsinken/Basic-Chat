@@ -207,12 +207,14 @@ extension StackingStoneViewController: UITextFieldDelegate {
         let inputText = textField.text ?? ""
         //Force AT+CMD to uppercased, argvs doesn't uppercase
         let at = ATCmdHelper.normalizeStrATCmdAndParam(inputText)
-        print("Value Sent: \(at)")
+        print("Value Sent: \(at)", "\n")
         
         let onlyCmd: String = ATCmdHelper.normalizeStrATCmdAndParam(inputText, cutParam: true)
         let command = ATCommand(sendCMD: onlyCmd)
-        print("inputText Conv Command:", command ?? "Not Found", "\n")
+        print("inputText Conv Command:", command ?? "Not Found")
         
+        let onlyParam: String = ATCmdHelper.getOnlyParamStr(atCmdStr: inputText)
+        print("inputText Conv Param:", onlyParam, "\n")
         //TODO: 改使用ATCmdData來送
         
         

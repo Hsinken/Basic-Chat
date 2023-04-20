@@ -114,6 +114,22 @@ class ATCmdHelper: NSObject {
         return result
     }
     
+    //只取得Param部分
+    public static func getOnlyParamStr(atCmdStr: String?) -> String {
+        var result: String = ""
+        if let procStr = atCmdStr {
+            let cmdStr = procStr.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "\t", with: "")
+            if cmdStr.uppercased().hasPrefix("AT+") {
+                if let index = cmdStr.firstIndex(of: " ") {
+                    let cmd = cmdStr[..<index]
+                    //移除CMD 並把多餘空白消掉
+                    result = cmdStr.replacingOccurrences(of: cmd, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+            }
+        }
+        return result
+    }
+    
     public static func convIntToBatteryVoltage(_ value: Int) -> Float {
         return Float(value) * 7.2 / 1023.0
     }
