@@ -8,8 +8,23 @@
 import Foundation
 
 import UIKit
+import DequeModule
 
-enum ATCmdReceiveCode : UInt16, CaseIterable {
+//ATCmd處理 主要用Delegate，特殊情況才考慮用Notifaction
+
+enum ATCmdSendCommand : String, CaseIterable {
+    case GBAT = "AT+GBAT"
+    case GGPS = "AT+GGPS"
+    case GTIME = "AT+GTIME"
+    case GVER = "AT+GVER"
+    //case GLOG =
+    //case SUID =
+    case SVOICE = "AT+SVOICE"
+    //case SUGENT =
+    case NotSet = "ATCmd NotSet"
+}
+
+enum ATCmdReceiveHeader : UInt16, CaseIterable {
     case GBAT = 0x0274
     case GGPS = 0x0288
     case GTIME = 0x0501
@@ -19,6 +34,7 @@ enum ATCmdReceiveCode : UInt16, CaseIterable {
     //case SVOICE =
     //case SUGENT =
     case NotFound = 0xffff
+    case NotSet = 0x0000
 }
 
 enum ATCmdReceiveDataKey : String {
@@ -30,31 +46,40 @@ enum ATCmdReceiveDataKey : String {
 }
 
 struct ATCmdReceiveData {
-    var cmdCode: ATCmdReceiveCode
+    var cmdCode: ATCmdReceiveHeader
     var dataAry: [ATCmdReceiveDataKey: String]
 }
 
-//TODO: 建立AT指令 與 處理回傳資料，送指令由DeviceMagHelper處理
+//TODO: 建立AT指令 與 處理回傳資料 與 Queue，指令送出由DeviceMagHelper處理
 
 class ATCmdHelper: NSObject {
+    static let shared = ATCmdHelper()
+    
     public static let CMDCodeStrLength: Int = 4
-    public static let EndCMDStr: String = "\nOK".lowercased()
+    public static let CMDReceiveOneTimeEndStr: String = "\nOK".lowercased()
+    public static let CMDReceiveBatchFinishStr: String = "\nEOF".lowercased() //批次傳輸後面無資料
+    public static let CMDReceiveBatchContinueStr: String = "\nTBC".lowercased() //批次傳輸後面還有資料，要再呼叫CMD抓
     public static let LocationDegreesFixedDivisor: Double = 10000000.0 //座標固定格式 用INT代表 正負1~3位整數部分 + 小數點固定後七位
+    
+    public static let CMDSendRetryTimes: Int = 3 //送出出錯時 重試幾次
+    public static let CMDSendRetryDelay: TimeInterval = 0.1 //送出出錯時 延遲多少秒重試
+    
+    var ATCmdDeque: Deque<ATCmdData> = []
     
     public static func receiveToData(_ receive: String?) -> ATCmdReceiveData? {
         print("receiveToData:", receive ?? "nil")
         if var procStr = receive {
-            if !procStr.lowercased().trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix(EndCMDStr) {
+            if !procStr.lowercased().trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix(CMDReceiveOneTimeEndStr) {
                 print("No CMD End")
                 return nil
             } else {
                 procStr = procStr.trimmingCharacters(in: .whitespacesAndNewlines)
-                let endIndex = procStr.index(procStr.endIndex, offsetBy:-EndCMDStr.count)
+                let endIndex = procStr.index(procStr.endIndex, offsetBy:-CMDReceiveOneTimeEndStr.count)
                 procStr = String(procStr[...endIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
             }
             
-            var findCmdCode: ATCmdReceiveCode? = nil
-            for code in ATCmdReceiveCode.allCases {
+            var findCmdCode: ATCmdReceiveHeader? = nil
+            for code in ATCmdReceiveHeader.allCases {
                 let cmdHexStr = ATCmdHelper.receiveCodeToHexString(code)
                 if procStr.hasPrefix(cmdHexStr) {
                     findCmdCode = code
@@ -83,6 +108,8 @@ class ATCmdHelper: NSObject {
                         break
                     case .NotFound:
                         break
+                    case .NotSet:
+                        break
                 }
                 
                 if procSuccess {
@@ -98,7 +125,7 @@ class ATCmdHelper: NSObject {
         return nil
     }
     
-    public static func receiveCodeToHexString(_ code: ATCmdReceiveCode) -> String{
+    public static func receiveCodeToHexString(_ code: ATCmdReceiveHeader) -> String{
         let str = String(format:"%04X", code.rawValue)
         return str
     }

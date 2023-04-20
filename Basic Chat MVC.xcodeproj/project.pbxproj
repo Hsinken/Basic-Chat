@@ -17,8 +17,13 @@
 		29A1DF6725CBB6E4000A9A84 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A1DF6625CBB6E4000A9A84 /* TableViewCell.swift */; };
 		29A1DF7025CF0560000A9A84 /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */; };
 		29DEAA1225D9A787002AECEC /* BlePeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DEAA1125D9A787002AECEC /* BlePeripheral.swift */; };
+		4F19D0DD29F05F7A00FE5147 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 4F19D0DC29F05F7A00FE5147 /* Collections */; };
+		4F19D0DF29F05F7A00FE5147 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 4F19D0DE29F05F7A00FE5147 /* DequeModule */; };
+		4F19D0E129F05F7A00FE5147 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 4F19D0E029F05F7A00FE5147 /* OrderedCollections */; };
+		4F19D0E429F0FEE000FE5147 /* ATCmdData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0E329F0FEE000FE5147 /* ATCmdData.swift */; };
+		4F19D0E629F152B000FE5147 /* StackingStoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0E529F152B000FE5147 /* StackingStoneViewController.swift */; };
+		4F19D0E929F1547000FE5147 /* UITextView+ScrollToBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F19D0E829F1547000FE5147 /* UITextView+ScrollToBottom.swift */; };
 		4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */; };
-		4F73CBC629E90FBD00BA8032 /* String+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73CBC529E90FBD00BA8032 /* String+Hex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,8 +39,10 @@
 		29A1DF6625CBB6E4000A9A84 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleViewController.swift; sourceTree = "<group>"; };
 		29DEAA1125D9A787002AECEC /* BlePeripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheral.swift; sourceTree = "<group>"; };
+		4F19D0E329F0FEE000FE5147 /* ATCmdData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCmdData.swift; sourceTree = "<group>"; };
+		4F19D0E529F152B000FE5147 /* StackingStoneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackingStoneViewController.swift; sourceTree = "<group>"; };
+		4F19D0E829F1547000FE5147 /* UITextView+ScrollToBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+ScrollToBottom.swift"; sourceTree = "<group>"; };
 		4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCmdHelper.swift; sourceTree = "<group>"; };
-		4F73CBC529E90FBD00BA8032 /* String+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Hex.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +50,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F19D0DD29F05F7A00FE5147 /* Collections in Frameworks */,
+				4F19D0DF29F05F7A00FE5147 /* DequeModule in Frameworks */,
+				4F19D0E129F05F7A00FE5147 /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +73,7 @@
 			children = (
 				29A1DF4C25CB1D7F000A9A84 /* ViewController.swift */,
 				29A1DF6F25CF0560000A9A84 /* ConsoleViewController.swift */,
+				4F19D0E529F152B000FE5147 /* StackingStoneViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -94,6 +105,7 @@
 		29A1DF4725CB1D7F000A9A84 /* Basic Chat MVC */ = {
 			isa = PBXGroup;
 			children = (
+				4F19D0E729F1543700FE5147 /* Extension */,
 				4F73CBC029E863DA00BA8032 /* Helper */,
 				29A1DF4825CB1D7F000A9A84 /* AppDelegate.swift */,
 				29A1DF4A25CB1D7F000A9A84 /* SceneDelegate.swift */,
@@ -108,21 +120,29 @@
 			path = "Basic Chat MVC";
 			sourceTree = "<group>";
 		};
+		4F19D0E229F0FE8600FE5147 /* Struct */ = {
+			isa = PBXGroup;
+			children = (
+				4F19D0E329F0FEE000FE5147 /* ATCmdData.swift */,
+			);
+			path = Struct;
+			sourceTree = "<group>";
+		};
+		4F19D0E729F1543700FE5147 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4F19D0E829F1547000FE5147 /* UITextView+ScrollToBottom.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
 		4F73CBC029E863DA00BA8032 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				4F73CBC429E90F9A00BA8032 /* extension */,
+				4F19D0E229F0FE8600FE5147 /* Struct */,
 				4F73CBC129E8642000BA8032 /* ATCmdHelper.swift */,
 			);
 			path = Helper;
-			sourceTree = "<group>";
-		};
-		4F73CBC429E90F9A00BA8032 /* extension */ = {
-			isa = PBXGroup;
-			children = (
-				4F73CBC529E90FBD00BA8032 /* String+Hex.swift */,
-			);
-			path = extension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,6 +161,11 @@
 			dependencies = (
 			);
 			name = "Basic Chat MVC";
+			packageProductDependencies = (
+				4F19D0DC29F05F7A00FE5147 /* Collections */,
+				4F19D0DE29F05F7A00FE5147 /* DequeModule */,
+				4F19D0E029F05F7A00FE5147 /* OrderedCollections */,
+			);
 			productName = "Basic Chat MVC";
 			productReference = 29A1DF4525CB1D7F000A9A84 /* Basic Chat MVC.app */;
 			productType = "com.apple.product-type.application";
@@ -169,6 +194,9 @@
 				Base,
 			);
 			mainGroup = 29A1DF3C25CB1D7F000A9A84;
+			packageReferences = (
+				4F19D0DB29F05F7A00FE5147 /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = 29A1DF4625CB1D7F000A9A84 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -197,12 +225,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				29A1DF4D25CB1D7F000A9A84 /* ViewController.swift in Sources */,
+				4F19D0E429F0FEE000FE5147 /* ATCmdData.swift in Sources */,
+				4F19D0E629F152B000FE5147 /* StackingStoneViewController.swift in Sources */,
 				29A1DF4925CB1D7F000A9A84 /* AppDelegate.swift in Sources */,
 				29A1DF6225CBA309000A9A84 /* CBUUIDs.swift in Sources */,
 				29A1DF7025CF0560000A9A84 /* ConsoleViewController.swift in Sources */,
 				29A1DF6725CBB6E4000A9A84 /* TableViewCell.swift in Sources */,
-				4F73CBC629E90FBD00BA8032 /* String+Hex.swift in Sources */,
 				4F73CBC229E8642000BA8032 /* ATCmdHelper.swift in Sources */,
+				4F19D0E929F1547000FE5147 /* UITextView+ScrollToBottom.swift in Sources */,
 				29A1DF4B25CB1D7F000A9A84 /* SceneDelegate.swift in Sources */,
 				29DEAA1225D9A787002AECEC /* BlePeripheral.swift in Sources */,
 			);
@@ -414,6 +444,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4F19D0DB29F05F7A00FE5147 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4F19D0DC29F05F7A00FE5147 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F19D0DB29F05F7A00FE5147 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		4F19D0DE29F05F7A00FE5147 /* DequeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F19D0DB29F05F7A00FE5147 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = DequeModule;
+		};
+		4F19D0E029F05F7A00FE5147 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F19D0DB29F05F7A00FE5147 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 29A1DF3D25CB1D7F000A9A84 /* Project object */;
 }

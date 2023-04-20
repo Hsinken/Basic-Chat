@@ -1,15 +1,15 @@
 //
-//  ConsoleViewController.swift
+//  StackingStoneViewController.swift
 //  Basic Chat
 //
-//  Created by Trevor Beaton on 2/6/21.
+//  Created by Hsinken on 2023/4/20.
 //
-//  Updated by Hsinken on 2023/4/20.
+//  Special for Stacking Stone
 
 import UIKit
 import CoreBluetooth
 
-class ConsoleViewController: UIViewController {
+class StackingStoneViewController: UIViewController {
     
     //Data
     var peripheralManager: CBPeripheralManager?
@@ -39,7 +39,7 @@ class ConsoleViewController: UIViewController {
         rxLabel.text = "RX:\(String(BlePeripheral.connectedRXChar!.uuid.uuidString))"
         
         if let _ = BlePeripheral.connectedService {
-            serviceLabel.text = "Unknown Device Services Count: \(String((BlePeripheral.connectedPeripheral?.services!.count)!))"
+            serviceLabel.text = "Stacking Stone Services Count: \(String((BlePeripheral.connectedPeripheral?.services!.count)!))"
         } else{
             print("Service was not found")
         }
@@ -171,7 +171,7 @@ class ConsoleViewController: UIViewController {
     }
 }
 
-extension ConsoleViewController: CBPeripheralManagerDelegate {
+extension StackingStoneViewController: CBPeripheralManagerDelegate {
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         switch peripheral.state {
@@ -200,7 +200,7 @@ extension ConsoleViewController: CBPeripheralManagerDelegate {
     
 }
 
-extension ConsoleViewController: UITextFieldDelegate {
+extension StackingStoneViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let input = textField.text ?? ""
