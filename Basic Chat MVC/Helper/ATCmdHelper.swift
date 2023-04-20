@@ -89,6 +89,31 @@ class ATCmdHelper: NSObject {
         return nil
     }
     
+    //讓輸入指令都正規化成 AT+XX
+    public static func normalizeStrATCmdAndParam(_ atCmdStr: String?, cutParam: Bool=false) -> String {
+        var result: String = "No Set"
+        if let procStr = atCmdStr {
+            let cmdStr = procStr.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "\t", with: "")
+            if cmdStr.uppercased().hasPrefix("AT+") {
+                if let index = cmdStr.firstIndex(of: " ") {
+                    let cmd = cmdStr[..<index]
+                    let cmdUP = String(cmd).uppercased()
+                    if cutParam {
+                        result = cmdUP
+                    } else {
+                        result = cmdStr.replacingOccurrences(of: cmd, with: cmdUP)
+                    }
+                    print("normalize CMD uppercased:" + result)
+                } else {
+                    //Only Cmd
+                    result = cmdStr.uppercased()
+                    print("normalize All uppercased:" + result)
+                }
+            }
+        }
+        return result
+    }
+    
     public static func convIntToBatteryVoltage(_ value: Int) -> Float {
         return Float(value) * 7.2 / 1023.0
     }

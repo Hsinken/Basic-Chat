@@ -204,22 +204,18 @@ extension StackingStoneViewController: CBPeripheralManagerDelegate {
 extension StackingStoneViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let input = textField.text ?? ""
-        var at = input
+        let inputText = textField.text ?? ""
         //Force AT+CMD to uppercased, argvs doesn't uppercase
-        if input.uppercased().hasPrefix("AT+") {
-            if let index = input.firstIndex(of: " ") {
-                let cmd = input[..<index]
-                let cmdS = String(cmd).uppercased()
-                at = input.replacingOccurrences(of: cmd, with: cmdS)
-                //print(cmdS)
-                print("CMD uppercased:" + at)
-            } else {
-                at = input.uppercased()
-                print("All uppercased:" + at)
-            }
-        }
+        let at = ATCmdHelper.normalizeStrATCmdAndParam(inputText)
         print("Value Sent: \(at)")
+        
+        let onlyCmd: String = ATCmdHelper.normalizeStrATCmdAndParam(inputText, cutParam: true)
+        let command = ATCommand(sendCMD: onlyCmd)
+        print("inputText Conv Command:", command ?? "Not Found", "\n")
+        
+        //TODO: 改使用ATCmdData來送
+        
+        
         writeOutgoingValue(data: at)
         appendTxDataToTextView(CMD: at)
         textField.resignFirstResponder()
