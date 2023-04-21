@@ -58,7 +58,7 @@ extension ATCommand : RawRepresentable {
             case ConstATCmd.GGPS_RecvHeader : self = .GGPS
             case ConstATCmd.GTIME_RecvHeader : self = .GTIME
             case ConstATCmd.GVER_RecvHeader : self = .GVER
-            default: self = .notSet
+            default: return nil
         }
     }
     
@@ -68,7 +68,7 @@ extension ATCommand : RawRepresentable {
             case ConstATCmd.GGPS_RecvHeaderStr : self = .GGPS
             case ConstATCmd.GTIME_RecvHeaderStr : self = .GTIME
             case ConstATCmd.GVER_RecvHeaderStr : self = .GVER
-            default: self = .notSet
+            default: return nil
         }
     }
     
@@ -78,7 +78,7 @@ extension ATCommand : RawRepresentable {
             case ConstATCmd.GGPS_SendCMD : self = .GGPS
             case ConstATCmd.GTIME_SendCMD : self = .GTIME
             case ConstATCmd.GVER_SendCMD : self = .GVER
-            default: self = .notSet
+            default: return nil
         }
     }
 

@@ -42,7 +42,7 @@ enum ATCmdReceiveDataKey : String {
 
 struct ATCmdData {
     var status: ATCmdDataStatus = .notSet
-    var command: ATCommand = .notSet
+    var command: ATCommand? = .notSet
     var send: ATCmdDataSend
     var recv: ATCmdDataRecv
     var updateTime: Date = Date()

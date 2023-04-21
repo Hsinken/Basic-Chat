@@ -5,8 +5,6 @@
 //  Created by wu hsin-hsien on 2023/4/14.
 //
 
-import Foundation
-
 import UIKit
 import DequeModule
 
@@ -18,74 +16,175 @@ struct ATCmdReceiveData {
 }
 
 //TODO: 建立AT指令 與 處理回傳資料 與 Queue，指令送出由DeviceMagHelper處理
+protocol ATCmdHelperSendDelegate {
+    func sendCMDAndParam(cmdStr: String)
+}
+
+protocol ATCmdHelperRecvDelegate {
+    func recvCMDAndPaylod(cmdData: ATCmdData?)
+}
 
 class ATCmdHelper: NSObject {
     static let shared = ATCmdHelper()
     
     public static let CMDCodeStrLength: Int = 4
-    public static let CMDReceiveOneTimeEndStr: String = "\nOK".lowercased()
-    public static let CMDReceiveBatchFinishStr: String = "\nEOF".lowercased() //批次傳輸後面無資料
-    public static let CMDReceiveBatchContinueStr: String = "\nTBC".lowercased() //批次傳輸後面還有資料，要再呼叫CMD抓
+    public static let CMDReceiveOneTimeEndStr: String = "\nOK\n".lowercased()
+    public static let CMDReceiveBatchFinishStr: String = "\nEOF\n".lowercased() //批次傳輸後面無資料
+    public static let CMDReceiveBatchContinueStr: String = "\nTBC\n".lowercased() //批次傳輸後面還有資料，要再呼叫CMD抓
     public static let LocationDegreesFixedDivisor: Double = 10000000.0 //座標固定格式 用INT代表 正負1~3位整數部分 + 小數點固定後七位
+    public static let LocationDegreesFixedHexLength: Int = 8 //經緯度固定資料長度
     
     public static let CMDSendRetryTimes: Int = 3 //送出出錯時 重試幾次
     public static let CMDSendRetryDelay: TimeInterval = 0.1 //送出出錯時 延遲多少秒重試
     
-    var ATCmdDeque: Deque<ATCmdData> = []
+    public var sendDelegate: ATCmdHelperSendDelegate? = nil
+    public var recvDelegate: ATCmdHelperRecvDelegate? = nil
     
-    public static func receiveToData(_ receive: String?) -> ATCmdReceiveData? {
-        print("receiveToData:", receive ?? "nil")
-        if var procStr = receive {
-            if !procStr.lowercased().trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix(CMDReceiveOneTimeEndStr) {
-                print("No CMD End")
-                return nil
-            } else {
-                procStr = procStr.trimmingCharacters(in: .whitespacesAndNewlines)
-                let endIndex = procStr.index(procStr.endIndex, offsetBy:-CMDReceiveOneTimeEndStr.count)
-                procStr = String(procStr[...endIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
-            }
-            
-            var findCmd: ATCommand? = nil
-            for cmd in ATCommand.allCases {
-                if procStr.hasPrefix(cmd.rawValue.recvHeaderStr) {
-                    findCmd = cmd
-                    print("Find CMD:", cmd)
-                    break
+    private var ATCmdDeque: Deque<ATCmdData> = []
+    
+    public func appendATCmdInDeque(cmdData: ATCmdData?) {
+        if var data = cmdData {
+            data.status = .waitingSend
+            ATCmdDeque.append(data)
+        }
+    }
+    
+    public func sendFirstATCmdInDeque() -> Bool {
+        if let delegate = self.sendDelegate {
+            if ATCmdDeque.count > 0 {
+                if var cmdData = ATCmdDeque.popFirst() {
+                    if let cmdStr = ATCmdHelper.generateToDeviceCmd(cmdData: cmdData) {
+                        cmdData.status = .waitingRecv
+                        ATCmdDeque.prepend(cmdData)
+                        delegate.sendCMDAndParam(cmdStr: cmdStr)
+                        
+                    } else {
+                        print("sendFirstATCmdInDeque Failed Cmd:", cmdData)
+                    }
                 }
-            }
-            
-            if let procCmd = findCmd {
-                var procSuccess = false
-                var receiveData: [ATCmdReceiveDataKey: String] = [:]
-                let startIndex = procStr.index(procStr.startIndex, offsetBy:ATCmdHelper.CMDCodeStrLength)
-                let payload: String = String(procStr[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
-                switch procCmd {
-                    case .GBAT:
-                        if !payload.isEmpty {
-                            receiveData[ATCmdReceiveDataKey.BatteryLV] = payload
-                            procSuccess = true
-                        }
-                        break
-                    case .GGPS:
-                        break
-                    case .GTIME:
-                        break
-                    case.GVER:
-                        break
-                    case .notSet:
-                        break
-                }
-                
-                if procSuccess {
-                    return ATCmdReceiveData(command: procCmd, dataAry: receiveData)
-                } else {
-                    print("Process Payload Not success")
-                }
-            } else {
-                print("No match CMD")
             }
         }
-        
+        return false
+    }
+    
+    public func popFirstATCmdInDeque() -> ATCmdData? {
+        if ATCmdDeque.count > 0 {
+            return ATCmdDeque.popFirst()
+        }
+        return nil
+    }
+    
+    public func removeAllATCmdInDeque() {
+        if ATCmdDeque.count > 0 {
+            ATCmdDeque.removeAll()
+        }
+    }
+    
+    public static func generateToDeviceCmd(cmdData: ATCmdData?) -> String? {
+        if let procData = cmdData {
+            if procData.command != .notSet {
+                var cmdStr: String
+                if procData.send.param.isEmpty {
+                    cmdStr = String(format: "%@", procData.command!.rawValue.sendCMD)
+                } else {
+                    cmdStr = String(format: "%@ %@", procData.command!.rawValue.sendCMD, procData.send.param)
+                }
+                return cmdStr
+            }
+        }
+        return nil
+    }
+    
+    public static func receiveToData(_ receive: String?) -> ATCmdData? {
+        print("receiveToData:", receive ?? "nil")
+        if ATCmdHelper.shared.ATCmdDeque.count > 0 {
+            if var cmdData = ATCmdHelper.shared.ATCmdDeque.popFirst() {
+                if var procStr = receive {
+                    if !procStr.lowercased().trimmingCharacters(in: .whitespaces).hasSuffix(CMDReceiveOneTimeEndStr) {
+                        if cmdData.status == .waitingRecv {
+                            cmdData.recv.rawPayload.append(procStr)
+                            ATCmdHelper.shared.ATCmdDeque.prepend(cmdData)
+                            print("Data Append:", procStr)
+                        }
+                        return nil
+                    } else {
+                        if cmdData.status == .waitingRecv {
+                            cmdData.recv.rawPayload.append(procStr)
+                            print("CMD End Data Append:", procStr)
+                            //清除不要的指令結尾
+                            procStr = cmdData.recv.rawPayload.trimmingCharacters(in: .whitespaces)
+                            let endIndex = procStr.index(procStr.endIndex, offsetBy:-CMDReceiveOneTimeEndStr.count)
+                            procStr = String(procStr[...endIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
+                            cmdData.status = .processingPayload
+                            //下面會處理先不用放回Deque
+                        } else {
+                            //最後要恢復，給調用的地方清除
+                            ATCmdHelper.shared.ATCmdDeque.prepend(cmdData)
+                            return nil
+                        }
+                    }
+                    
+                    var findCmd: ATCommand?
+                    
+                    for cmd in ATCommand.allCases {
+                        if procStr.hasPrefix(cmd.rawValue.recvHeaderStr) {
+                            findCmd = cmd
+                            print("Find CMD:", cmd)
+                            break
+                        }
+                    }
+                    
+                    if let procCmd = findCmd {
+                        var procSuccess = false
+                        if cmdData.status == .processingPayload {
+                            var payloadAry: [ATCmdReceiveDataKey: String] = [:]
+                            let startIndex = procStr.index(procStr.startIndex, offsetBy:ATCmdHelper.CMDCodeStrLength)
+                            let payload: String = String(procStr[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                            switch procCmd {
+                                case .GBAT:
+                                    if !payload.isEmpty {
+                                        payloadAry[ATCmdReceiveDataKey.BatteryLV] = payload
+                                        cmdData.recv.payloadAry = payloadAry
+                                        procSuccess = true
+                                    }
+                                    break
+                                case .GGPS:
+                                    if !payload.isEmpty && payload.count > 16 {
+                                        let latEndIndex = payload.index(payload.startIndex, offsetBy:ATCmdHelper.LocationDegreesFixedHexLength)
+                                        let latHexStr = String(payload[..<latEndIndex])
+                                        let longEndIndex = payload.index(payload.startIndex, offsetBy:ATCmdHelper.LocationDegreesFixedHexLength*2)
+                                        let longHexStr = String(payload[latEndIndex..<longEndIndex])
+                                        let utcStr = payload[longEndIndex...]
+                                        
+                                        payloadAry[ATCmdReceiveDataKey.Latitude] = String(ATCmdHelper.hexStringToLocationDegrees(latHexStr) ?? 0.0)
+                                        payloadAry[ATCmdReceiveDataKey.Longitude] = String(ATCmdHelper.hexStringToLocationDegrees(longHexStr) ?? 0.0)
+                                        payloadAry[ATCmdReceiveDataKey.UTCDate] = String(utcStr)
+                                        cmdData.recv.payloadAry = payloadAry
+                                        procSuccess = true
+                                    }
+                                    break
+                                case .GTIME:
+                                    break
+                                case.GVER:
+                                    break
+                                case .notSet:
+                                    break
+                            }
+                            
+                            if procSuccess {
+                                cmdData.status = .payloadReady
+                                ATCmdHelper.shared.ATCmdDeque.prepend(cmdData)
+                                return cmdData
+                            } else {
+                                print("Process Payload Not success")
+                            }
+                        } else {
+                            print("No match cmd")
+                        }
+                    }
+                }
+            }
+        }
         return nil
     }
     

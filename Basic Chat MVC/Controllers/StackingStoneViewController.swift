@@ -25,11 +25,6 @@ class StackingStoneViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        keyboardNotifications()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.appendRxDataToTextView(notification:)), name: NSNotification.Name(rawValue: "Notify"), object: nil)
-        
         consoleTextField.delegate = self
         
         let connectedPeripheral = BlePeripheral.connectedPeripheral
@@ -45,6 +40,22 @@ class StackingStoneViewController: UIViewController {
         }
         
         consoleTextField.text = "AT+GBAT"
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        keyboardNotifications()
+        ATCmdHelper.shared.sendDelegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(self.appendRxDataToTextView(notification:)), name: NSNotification.Name(rawValue: "Notify"), object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        ATCmdHelper.shared.removeAllATCmdInDeque()
+        ATCmdHelper.shared.sendDelegate = nil
     }
     
     func getCurrentLocalTimeString() -> String {
@@ -72,34 +83,35 @@ class StackingStoneViewController: UIViewController {
                 let recvStr: String = data as! String
                 let displayStr: String = recvStr.replacingOccurrences(of: "\n", with: "\\n").replacingOccurrences(of: "\r", with: "\\r").replacingOccurrences(of: "\t", with: "\\t").replacingOccurrences(of: " ", with: "◇")
                 self.consoleTextView.text.append("\n[Recv] "+currntTime+"\n"+displayStr+"\n")
-                if let rData = ATCmdHelper.receiveToData(recvStr) {
-                    print(rData)
-                    self.consoleTextView.text.append("\nCMD:" + rData.command.rawValue.recvHeaderStr)
+                if let cmdData = ATCmdHelper.receiveToData(recvStr) {
+                    print(cmdData)
+                    self.consoleTextView.text.append("\nCMD:" + cmdData.command!.rawValue.recvHeaderStr)
                     self.consoleTextView.text.append("\nPayload:")
-                    for item in rData.dataAry {
-                        var str: String
-                        switch rData.command {
-                            case .GBAT:
-                                if let conv = ATCmdHelper.hexStringToInt(item.value) {
-                                    let batVoltage: Float = ATCmdHelper.convIntToBatteryVoltage(conv)
-                                    let convStr = String(conv)
-                                    let strS = "\nK:"+item.key.rawValue+"  V(I32 Hex):"
-                                    let strM = item.value+"  V(I32 10B):"+convStr+"\n"
-                                    let strE = "V(電壓):"+String(batVoltage)+"\n"
-                                    str = strS + strM + strE
-                                } else {
-                                    let strS = "\nK:"+item.key.rawValue+"  V:"
-                                    let strE = item.value+"\nV(Int32 10B): Can't Conv.\n"
-                                    str = strS + strE
-                                }
-                                break
-                            default:
-                                str = "\nK:" + item.key.rawValue + "  V:" + item.value + "\n"
-                                break
+                    if cmdData.status == .payloadReady {
+                        for item in cmdData.recv.payloadAry {
+                            var str: String
+                            switch cmdData.command {
+                                case .GBAT:
+                                    if let conv = ATCmdHelper.hexStringToInt(item.value) {
+                                        let batVoltage: Float = ATCmdHelper.convIntToBatteryVoltage(conv)
+                                        let convStr = String(conv)
+                                        let strS = "\nK:"+item.key.rawValue+"  V(I32 Hex):"
+                                        let strM = item.value+"  V(I32 10B):"+convStr+"\n"
+                                        let strE = "V(電壓):"+String(batVoltage)+"\n"
+                                        str = strS + strM + strE
+                                    } else {
+                                        let strS = "\nK:"+item.key.rawValue+"  V:"
+                                        let strE = item.value+"\nV(Int32 10B): Can't Conv.\n"
+                                        str = strS + strE
+                                    }
+                                    break
+                                default:
+                                    str = "\nK:" + item.key.rawValue + "  V:" + item.value + "\n"
+                                    break
+                            }
+                            let _ = ATCmdHelper.shared.popFirstATCmdInDeque()
+                            self.consoleTextView.text.append(str)
                         }
-                        
-                        
-                        self.consoleTextView.text.append(str)
                     }
                 }
                 self.consoleTextView.ScrollToBottom()
@@ -107,10 +119,10 @@ class StackingStoneViewController: UIViewController {
         }
     }
     
-    func appendTxDataToTextView(CMD: String = ""){
+    func appendTxDataToTextView(cmdStr: String = ""){
         let currntTime = self.getCurrentLocalTimeString()
         DispatchQueue.main.asyncAfter(deadline:.now() + 0.3) {
-            self.consoleTextView.text.append("\n=======\n[Sent] "+currntTime+"\n \(CMD) \n")
+            self.consoleTextView.text.append("\n=======\n[Sent] "+currntTime+"\n \(cmdStr) \n")
             self.consoleTextView.ScrollToBottom()
         }
     }
@@ -121,12 +133,6 @@ class StackingStoneViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidHide(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
     
     // MARK:- Keyboard
@@ -149,8 +155,8 @@ class StackingStoneViewController: UIViewController {
     }
     
     // Write functions
-    func writeOutgoingValue(data: String){
-        let valueString = (data as NSString).data(using: String.Encoding.utf8.rawValue)
+    func writeOutgoingValue(cmdStr: String){
+        let valueString = (cmdStr as NSString).data(using: String.Encoding.utf8.rawValue)
         //change the "data" to valueString
         if let blePeripheral = BlePeripheral.connectedPeripheral {
             if let txCharacteristic = BlePeripheral.connectedTXChar {
@@ -216,14 +222,25 @@ extension StackingStoneViewController: UITextFieldDelegate {
         let onlyParam: String = ATCmdHelper.getOnlyParamStr(atCmdStr: inputText)
         print("inputText Conv Param:", onlyParam, "\n")
         //TODO: 改使用ATCmdData來送
+        var sendData = ATCmdDataSend()
+        sendData.param = onlyParam
+        var recvData = ATCmdDataRecv()
+        recvData.mode = .oneTime
         
+        var cmdData = ATCmdData(send: sendData,
+                                recv: recvData)
+        cmdData.command = command ?? .notSet
+        if cmdData.command != .notSet {
+            ATCmdHelper.shared.appendATCmdInDeque(cmdData: cmdData)
+            let _ = ATCmdHelper.shared.sendFirstATCmdInDeque()
+        } else {
+            writeOutgoingValue(cmdStr: at)
+            appendTxDataToTextView(cmdStr: at)
+        }
         
-        writeOutgoingValue(data: at)
-        appendTxDataToTextView(CMD: at)
         textField.resignFirstResponder()
         //textField.text = ""
         return true
-        
     }
     
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
@@ -231,4 +248,11 @@ extension StackingStoneViewController: UITextFieldDelegate {
         return true
     }
     
+}
+
+extension StackingStoneViewController : ATCmdHelperSendDelegate {
+    func sendCMDAndParam(cmdStr: String) {
+        self.writeOutgoingValue(cmdStr: cmdStr)
+        self.appendTxDataToTextView(cmdStr: cmdStr)
+    }
 }
