@@ -88,30 +88,50 @@ class StackingStoneViewController: UIViewController {
                     self.consoleTextView.text.append("\nCMD:" + cmdData.command!.rawValue.recvHeaderStr)
                     self.consoleTextView.text.append("\nPayload:")
                     if cmdData.status == .payloadReady {
-                        for item in cmdData.recv.payloadAry {
-                            var str: String
-                            switch cmdData.command {
-                                case .GBAT:
-                                    if let conv = ATCmdHelper.hexStringToInt(item.value) {
+                        var str: String
+                        switch cmdData.command {
+                            case .GBAT:
+                                let payloadKey = ATCmdReceiveDataKey.BatteryLV
+                                if let batLv = cmdData.recv.payloadAry[payloadKey] {
+                                    if let conv = ATCmdHelper.hexStringToInt(batLv) {
                                         let batVoltage: Float = ATCmdHelper.convIntToBatteryVoltage(conv)
                                         let convStr = String(conv)
-                                        let strS = "\nK:"+item.key.rawValue+"  V(I32 Hex):"
-                                        let strM = item.value+"  V(I32 10B):"+convStr+"\n"
+                                        let strS = "\nK:"+payloadKey.rawValue+"  V(I32 Hex):"
+                                        let strM = batLv+"  V(I32 10B):"+convStr+"\n"
                                         let strE = "V(電壓):"+String(batVoltage)+"\n"
                                         str = strS + strM + strE
                                     } else {
-                                        let strS = "\nK:"+item.key.rawValue+"  V:"
-                                        let strE = item.value+"\nV(Int32 10B): Can't Conv.\n"
+                                        let strS = "\nK:"+payloadKey.rawValue+"  V:"
+                                        let strE = batLv+"\nV(Int32 10B): Can't Conv.\n"
                                         str = strS + strE
                                     }
-                                    break
-                                default:
-                                    str = "\nK:" + item.key.rawValue + "  V:" + item.value + "\n"
-                                    break
-                            }
-                            let _ = ATCmdHelper.shared.popFirstATCmdInDeque()
-                            self.consoleTextView.text.append(str)
+                                    self.consoleTextView.text.append(str)
+                                }
+                                break
+                            case .GGPS:
+                                let latKey = ATCmdReceiveDataKey.Latitude
+                                let longKey = ATCmdReceiveDataKey.Longitude
+                                let utcKey = ATCmdReceiveDataKey.UTCDate
+                                if let latStr = cmdData.recv.payloadAry[latKey] {
+                                    str = "\nK:"+latKey.rawValue+"  V:" + latStr
+                                    self.consoleTextView.text.append(str)
+                                }
+                                if let longStr = cmdData.recv.payloadAry[longKey] {
+                                    str = "\nK:"+longKey.rawValue+"  V:" + longStr
+                                    self.consoleTextView.text.append(str)
+                                }
+                                if let utcStr = cmdData.recv.payloadAry[utcKey] {
+                                    str = "\nK:"+utcKey.rawValue+"  V:" + utcStr
+                                    self.consoleTextView.text.append(str)
+                                }
+                                break
+                            default:
+                                for item in cmdData.recv.payloadAry {
+                                    str = "\nK:" + item.key.rawValue + "  V:" + item.value
+                                }
+                                break
                         }
+                        let _ = ATCmdHelper.shared.popFirstATCmdInDeque()
                     }
                 }
                 self.consoleTextView.ScrollToBottom()
