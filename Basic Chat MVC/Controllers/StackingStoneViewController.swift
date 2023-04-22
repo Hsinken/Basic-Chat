@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import MessageUI
 
 class StackingStoneViewController: UIViewController {
     
@@ -27,7 +28,7 @@ class StackingStoneViewController: UIViewController {
         super.viewDidLoad()
         consoleTextField.delegate = self
         self.title = "Stacking Stone"
-        
+        self.consoleTextView.delegate = self
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Export",
                                                                  style: .plain,
                                                                  target: self,
@@ -66,7 +67,28 @@ class StackingStoneViewController: UIViewController {
     
     @IBAction func actExport(_ sender: UIBarButtonItem) {
         print("click Export")
-        //TODO: 打包TextView內容和裝置資訊 寄信
+        
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.timeZone = TimeZone.current
+        let timestamp = dateFormatter.string(from: now)
+        
+        let email = "eaterest@gmail.com"
+        
+        let subject = "Hsinken ITRI BLE Tool Report-"+timestamp
+        let deviceName = self.peripheralLabel.text ?? "No name device"
+        let console = self.consoleTextView.text ?? "No Data"
+        let body =  deviceName + "\n▽▽▼▽▽ Console Start ▽▽▼▽▽" + console + "\n△△▲△△ Console End △△▲△△"
+                    
+        let coded = "mailto:\(email)?subject=\(subject)&body=\(body)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            
+        if let emailURL:NSURL = NSURL(string: coded!)
+        {
+            if UIApplication.shared.canOpenURL(emailURL as URL){
+                UIApplication.shared.open(emailURL as URL)
+            }
+        }
     }
     
     func getCurrentLocalTimeString() -> String {
@@ -135,6 +157,11 @@ class StackingStoneViewController: UIViewController {
                                     str = "\nK:"+utcKey.rawValue+"  V:" + utcStr
                                     self.consoleTextView.text.append(str)
                                 }
+                                //let gpsUrlBase = "https://maps.google.com/?q=25.1353333,121.4629466"
+                                let gpsUrlBase = "https://maps.google.com/?q="
+                                let gpsUrl = String(format: "%@%@,%@", gpsUrlBase, cmdData.recv.payloadAry[latKey]!, cmdData.recv.payloadAry[longKey]!)
+                                //最後樣式不能是Link會往後覆蓋
+                                self.consoleTextView.addHyperLinksToText(originalText: "\n開啟 GPS位置 地圖\n", hyperLinks: ["GPS位置": gpsUrl])
                                 break
                             default:
                                 for item in cmdData.recv.payloadAry {
@@ -183,6 +210,15 @@ class StackingStoneViewController: UIViewController {
     
     @objc func disconnectPeripheral() {
         print("Disconnect for peripheral.")
+        let alertVC = UIAlertController(title: "Bluetooth Required", message: "Disconnect for peripheral.", preferredStyle: UIAlertController.Style.alert)
+        
+        let action = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) -> Void in
+            self.dismiss(animated: true, completion: nil)
+        })
+        
+        alertVC.addAction(action)
+        
+        self.present(alertVC, animated: true, completion: nil)
     }
     
     // Write functions
@@ -252,7 +288,7 @@ extension StackingStoneViewController: UITextFieldDelegate {
         
         let onlyParam: String = ATCmdHelper.getOnlyParamStr(atCmdStr: inputText)
         print("inputText Conv Param:", onlyParam, "\n")
-        //TODO: 改使用ATCmdData來送
+        
         var sendData = ATCmdDataSend()
         sendData.param = onlyParam
         var recvData = ATCmdDataRecv()
@@ -285,5 +321,17 @@ extension StackingStoneViewController : ATCmdHelperSendDelegate {
     func sendCMDAndParam(cmdStr: String) {
         self.writeOutgoingValue(cmdStr: cmdStr)
         self.appendTxDataToTextView(cmdStr: cmdStr)
+    }
+}
+
+extension StackingStoneViewController : UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
+        
+        //if (URL.absoluteString == "https://google.com") {
+        if (URL.absoluteString.count > 0) {
+            UIApplication.shared.open(URL) { (Bool) in
+            }
+        }
+        return false
     }
 }

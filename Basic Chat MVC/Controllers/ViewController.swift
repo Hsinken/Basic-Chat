@@ -118,6 +118,11 @@ class ViewController: UIViewController {
                         detailViewController = storyboard.instantiateViewController(withIdentifier: "StackingStoneViewController")
                     }
                 }
+            } else if let pLocalName = BlePeripheral.connectedPeripheral?.name {
+                //有ITRI_HIKING裝置的AD Name會消失，假設使用者沒換裝置名字，這個可以做補充判斷
+                if pLocalName.hasPrefix("ITRI_HIKING_") {
+                    detailViewController = storyboard.instantiateViewController(withIdentifier: "StackingStoneViewController")
+                }
             }
             
             if detailViewController == nil {

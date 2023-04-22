@@ -326,6 +326,7 @@
                                 <color key="textColor" systemColor="systemGreenColor"/>
                                 <fontDescription key="fontDescription" name="Monaco" family="Monaco" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" returnKeyType="send"/>
+                                <dataDetectorType key="dataDetectorTypes" link="YES"/>
                             </textView>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Start Chatting..." textAlignment="natural" minimumFontSize="16" translatesAutoresizingMaskIntoConstraints="NO" id="Efp-kF-iUk">
                                 <rect key="frame" x="20" y="790" width="374" height="34"/>
