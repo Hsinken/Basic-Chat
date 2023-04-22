@@ -26,15 +26,21 @@ class StackingStoneViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         consoleTextField.delegate = self
+        self.title = "Stacking Stone"
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Export",
+                                                                 style: .plain,
+                                                                 target: self,
+                                                                 action: #selector(actExport))
         
         let connectedPeripheral = BlePeripheral.connectedPeripheral
-        peripheralLabel.text = (connectedPeripheral!.name ?? "No Name") + "(" + connectedPeripheral!.identifier.uuidString + ")"
+        peripheralLabel.text = (connectedPeripheral!.name ?? "No Name")
         
         txLabel.text = "TX:\(String(BlePeripheral.connectedTXChar!.uuid.uuidString))"
         rxLabel.text = "RX:\(String(BlePeripheral.connectedRXChar!.uuid.uuidString))"
         
         if let _ = BlePeripheral.connectedService {
-            serviceLabel.text = "Stacking Stone Services Count: \(String((BlePeripheral.connectedPeripheral?.services!.count)!))"
+            serviceLabel.text = "Services Count: \(String((BlePeripheral.connectedPeripheral?.services!.count)!))"
         } else{
             print("Service was not found")
         }
@@ -56,6 +62,11 @@ class StackingStoneViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         ATCmdHelper.shared.removeAllATCmdInDeque()
         ATCmdHelper.shared.sendDelegate = nil
+    }
+    
+    @IBAction func actExport(_ sender: UIBarButtonItem) {
+        print("click Export")
+        //TODO: 打包TextView內容和裝置資訊 寄信
     }
     
     func getCurrentLocalTimeString() -> String {
