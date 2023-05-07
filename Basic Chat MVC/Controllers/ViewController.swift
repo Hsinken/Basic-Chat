@@ -178,6 +178,16 @@ extension ViewController: CBCentralManagerDelegate {
         
         if peripheralArray.contains(peripheral) {
             print("Duplicate Found.")
+            if let adName:String = advertisementData["kCBAdvDataLocalName"] as? String {
+                if let index = peripheralArray.firstIndex(of: peripheral) {
+                    if let _ = advertisementDataArray[index]["kCBAdvDataLocalName"] as? String {
+                        print("have name not need add.")
+                    } else {
+                        print("add ad name:" + adName)
+                        advertisementDataArray[index]["kCBAdvDataLocalName"] = adName
+                    }
+                }
+            }
         } else {
             peripheralArray.append(peripheral)
             rssiArray.append(RSSI)
